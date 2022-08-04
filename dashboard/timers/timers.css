@@ -1,0 +1,77 @@
+#timer-template
+{
+    display: none;
+}
+
+.timer
+{
+    padding: 10px 0px;
+}
+
+.timer .timer-title
+{
+    text-align: center;
+    padding: 10px;
+    background: #222222;
+}
+
+.timer .timer-value
+{
+    padding: 10px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    background: #333333;
+
+    transition: all 1s;
+}
+
+.timer .timer-runner
+{
+    padding: 10px;
+    background: #444444;
+    display: flex;
+}
+
+.timer .timer-runner .timer-runner-title,
+.timer .timer-runner .timer-runner-value
+{
+    width: 50%;
+    text-align: center;
+}
+
+.timer .timer-runner .timer-runner-value
+{
+    font-weight: bold;
+}
+
+.timer.timer-started .timer-value
+{
+    background-color: #3333ff;
+}
+
+.timer.timer-started .timer-runner
+{
+    background-color: #4444ff;
+}
+
+.timer.timer-started.timer-paused .timer-value
+{
+    background-color: #888888;
+}
+
+.timer.timer-started.timer-paused .timer-runner
+{
+    background-color: #999999;
+}
+
+.timer.timer-ended .timer-value
+{
+    background-color: #33aa33;
+}
+
+.timer.timer-ended .timer-runner,
+.timer .timer-runner.timer-ended
+{
+    background-color: #44bb44;
+}

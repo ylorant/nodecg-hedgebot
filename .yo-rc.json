@@ -1,0 +1,9 @@
+{
+  "generator-nodecg": {
+    "promptValues": {
+      "authorName": "Yohann Lorant",
+      "authorEmail": "yohann.lorant@gmail.com",
+      "authorUrl": "https://github.com/ylorant"
+    }
+  }
+}

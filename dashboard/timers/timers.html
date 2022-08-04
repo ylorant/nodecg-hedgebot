@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<link rel="stylesheet" href="timers.css" />
+</head>
+<body>
+	<p>
+		Server time offset: <span id="server-offset"></span>
+	</p>
+	<div id="timer-template" class="timer" data-id="">
+		<div class="timer-title"></div>
+		<div class="timer-value"></div>
+		<div class="timer-runners">
+
+		</div>
+	</div>
+	<div id="timer-runner-template" class="timer-runner" data-name="">
+		<div class="timer-runner-title"></div>
+		<div class="timer-runner-value"></div>
+	</div>
+
+    <div id="timers"></div>
+
+	<script src="../base-panel.js"></script>
+	<script src="timers.js"></script>
+	<script type="text/javascript">
+		let panel = new TimersPanel(nodecg);
+		panel.init();
+	</script>
+</body>
+</html>

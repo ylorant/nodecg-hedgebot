@@ -1,0 +1,64 @@
+{
+  "name": "hedgebot",
+  "version": "1.0.0",
+  "description": "Hedgebot bundle, handles forwarding data from the bot",
+  "homepage": "https://github.com/ylorant/nodecg-hedgebot",
+  "author": {
+    "name": "Yohann Lorant",
+    "email": "yohann.lorant@gmail.com",
+    "url": "https://github.com/ylorant"
+  },
+  "files": [
+    "dashboard",
+    "graphics",
+    "extension.js",
+    "extension"
+  ],
+  "keywords": [
+    "hedgebot",
+    "base",
+    "nodecg-bundle"
+  ],
+  "nodecg": {
+    "compatibleRange": "^1.1.1",
+    "dashboardPanels": [
+      {
+        "name": "main-panel",
+        "title": "Hedgebot",
+        "width": 2,
+        "file": "main-panel/main-panel.html",
+        "headerColor": "#525F78"
+      },
+      {
+        "name": "schedule-info",
+        "title": "Schedule info",
+        "width": 2,
+        "file": "schedule-info/schedule-info.html",
+        "headerColor": "#525F78"
+      },
+      {
+        "name": "timers",
+        "title": "Timers",
+        "width": 2,
+        "file": "timers/timers.html",
+        "headerColor": "#525F78"
+      },
+      {
+        "name": "host-overlay",
+        "title": "Host overlay",
+        "width": 9,
+        "workspace": "Hosts",
+        "file": "host-overlay/host-overlay.html",
+        "headerColor": "#525F78"
+      }
+    ]
+  },
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "eventsource": "^2.0.2",
+    "lodash": "^4.17.21",
+    "markdown-link-extractor": "^4.0.1",
+    "node-fetch": "^3.2.6"
+  }
+}
