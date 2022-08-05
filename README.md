@@ -10,7 +10,7 @@ This bundles allows you to fetch Hedgebot information into NodeCG. It can fetch 
 Configuration can be done in your NodeCG install by adding a `cfg/hedgebot.json` file. Here are the available
 configuration variables :
 
-```json
+```js
 {
     "channel": "linkboss", // Channel to use to fetch active schedules from
     // Timers: each element in this object references a timer id with a specified key (not )
