@@ -14,7 +14,6 @@ class HedgebotExtension
 
         nodecg.log.info("Initializing Hedgebot bundle");
 
-
         // Creating replicants
         this.replicants.connected = nodecg.Replicant("connected", "hedgebot", DEFAULT_REPLICANT_OPTS);
         this.replicants.lastRefresh = nodecg.Replicant("lastRefresh", "hedgebot", DEFAULT_REPLICANT_OPTS);
