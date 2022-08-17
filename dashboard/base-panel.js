@@ -19,6 +19,5 @@ class BasePanel
 
         this.replicants[name] = this.nodecg.Replicant(name, "hedgebot", DEFAULT_REPLICANT_OPTS);
         this.replicants[name].on('change', updateCallback);
-        this.nodecg.readReplicant(name, "hedgebot", updateCallback);
     }
 }
