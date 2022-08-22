@@ -10,7 +10,7 @@ class TimersPanel extends BasePanel
         this.registerReplicant('timers', this.onTimersUpdate.bind(this));
         this.registerReplicant('serverOffset', this.onServerOffsetUpdate.bind(this));
 
-        setInterval(this.refreshTimersInterval.bind(this), 500);
+        setInterval(this.refreshTimersInterval.bind(this), 250);
     }
 
     getTimerElapsedTime(startTime, offset = 0, paused = false, started = false, countdownAmount = null)
