@@ -29,7 +29,7 @@ class ScheduleInfoPanel extends BasePanel
             let value = itemInfo.data[key];
             let valueAsText = value;
             
-            if(typeof value == "object") {
+            if(value && typeof value == "object") {
                 valueAsText = value.titles.join(", ");
             }
             

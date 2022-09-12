@@ -118,7 +118,12 @@ class HedgebotExtension
 
     parseLinks(markdown)
     {
-        let entities = markdown.matchAll(/\[(.+)\]\((.+)\)/g);
+        // Don't handle any type that isn't a string
+        if(typeof markdown !== "string") {
+            return markdown;
+        }
+
+        let entities = markdown.matchAll(/\[(.+?)\]\((.+?)\)/g);
 
         let output = {
             clean: markdown,
