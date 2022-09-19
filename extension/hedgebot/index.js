@@ -32,6 +32,8 @@ class HedgebotExtension
         this.client.on('horaro/scheduleupdate', this.onScheduleUpdate.bind(this));
         this.client.on('timer/*', this.onTimerUpdate.bind(this));
         
+        nodecg.listenFor("rpcCall", this.onRPCCall.bind(this));
+
         this.client.initEventListener();
     }
 
@@ -49,6 +51,12 @@ class HedgebotExtension
             let timerId = this.nodecg.bundleConfig.timers[type];
             let prom = this.client.query("/plugin/timer", "getTimerById", [timerId])
                 .then((timer) => {
+                    // Handle the case when the requested timer does not exist
+                    if(!timer) {
+                        this.nodecg.log.error("Cannot fetch timer " + timerId);
+                        return;
+                    }
+
                     timerCount++;
                     fetchedIds.push(timer.id);
                     timerList[type] = timer;
@@ -79,15 +87,7 @@ class HedgebotExtension
         this.client.query("/plugin/horaro", "getCurrentSchedule", [this.nodecg.bundleConfig.channel])
             .then((schedule) => {
                 if(schedule) {
-                    let currentItem = _.cloneDeep(schedule.currentItem);
-                    let nextItem = _.cloneDeep(schedule.nextItem);
-
-                    currentItem = this.formatItemData(currentItem, schedule);
-                    nextItem = this.formatItemData(nextItem, schedule);
-
-                    this.replicants.scheduleCurrent.value = currentItem;
-                    this.replicants.scheduleNext.value = nextItem;
-                    this.replicants.schedule.value = schedule;
+                    this.storeSchedule(schedule);
 
                     this.nodecg.log.info("Fetched schedule.");
                 } else {
@@ -159,6 +159,25 @@ class HedgebotExtension
         this.replicants.serverOffset.value = timeDiff;
     }
 
+    storeSchedule(schedule)
+    {
+        let currentItem = _.cloneDeep(schedule.currentItem);
+        let nextItem = _.cloneDeep(schedule.nextItem);
+
+        currentItem = this.formatItemData(currentItem, schedule);
+        nextItem = this.formatItemData(nextItem, schedule);
+
+        for(let item of schedule.data.items) {
+            item = this.formatItemData(item, schedule);
+        }
+
+        this.replicants.scheduleCurrent.value = currentItem;
+        this.replicants.scheduleNext.value = nextItem;
+        this.replicants.schedule.value = schedule;
+    }
+
+    // Events //
+
     onConnect(e)
     {
         if(!this.alreadyConnected) {
@@ -182,15 +201,7 @@ class HedgebotExtension
     onScheduleUpdate(data)
     {
         if(!this.replicants.schedule.value || data.schedule.identSlug == this.replicants.schedule.value.identSlug) {
-            let currentItem = _.cloneDeep(data.schedule.currentItem);
-            let nextItem = _.cloneDeep(data.schedule.nextItem);
-    
-            currentItem = this.formatItemData(currentItem, data.schedule);
-            nextItem = this.formatItemData(nextItem, data.schedule);
-    
-            this.replicants.scheduleCurrent.value = currentItem;
-            this.replicants.scheduleNext.value = nextItem;
-            this.replicants.schedule.value = data.schedule;
+            this.storeSchedule(data.schedule);
         }
     }
 
@@ -209,6 +220,11 @@ class HedgebotExtension
                 this.replicants.timers.value[timerType] = data.timer;
             }
         }
+    }
+
+    onRPCCall(callData)
+    {
+        this.client.query(callData.endpoint, callData.method, callData.args);
     }
 }
 
