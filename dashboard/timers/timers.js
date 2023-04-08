@@ -55,7 +55,7 @@ class TimersPanel extends BasePanel
         output = components.join(":");
 
         if(milliseconds) {
-            var ms = Math.round(($elapsed - totalSeconds) * 1000);
+            var ms = Math.round((elapsed - totalSeconds) * 1000);
             output += "." + ms;
         }
         

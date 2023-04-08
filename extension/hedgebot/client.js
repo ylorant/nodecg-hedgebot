@@ -93,6 +93,7 @@ class Client extends EventEmitter
 
         this.isConnected = false;
         this.emit('disconnected');
+        setTimeout(this.initEventListener.bind(this), 5000);
     }
 
     onOpen(e)
