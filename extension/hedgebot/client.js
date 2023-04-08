@@ -89,11 +89,16 @@ class Client extends EventEmitter
     {
         if(e.message != undefined) {
             this.logger.error("Event relay error: " + e.message);
+            
+            // If we were connected, trigger a reconnect
+            if (this.isConnected) {
+                setTimeout(this.initEventListener.bind(this), 5000);
+            }
+    
+            this.isConnected = false;
+            this.emit('disconnected');
         }
 
-        this.isConnected = false;
-        this.emit('disconnected');
-        setTimeout(this.initEventListener.bind(this), 5000);
     }
 
     onOpen(e)
