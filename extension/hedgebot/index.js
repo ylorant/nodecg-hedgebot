@@ -84,7 +84,7 @@ class HedgebotExtension
     {
         this.nodecg.log.info("Fetching current schedule...");
 
-        this.client.query("/plugin/horaro", "getCurrentSchedule", [this.nodecg.bundleConfig.channel])
+        this.client.query("/plugin/horaro", "getCurrentSchedule", [this.nodecg.bundleConfig.channel, true])
             .then((schedule) => {
                 if(schedule) {
                     this.storeSchedule(schedule);
