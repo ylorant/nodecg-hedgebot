@@ -13,6 +13,8 @@ class Client extends EventEmitter
         this.client = null;
         this.eventSource = null;
         this.queryId = 1;
+        this.reconnectTimeout = null;
+        this.messageReceivedCount = 0;
 
         this.initClient();
     }
@@ -56,6 +58,16 @@ class Client extends EventEmitter
         this.eventSource.onmessage = this.onMessageReceived.bind(this);
         this.eventSource.onerror = this.onError.bind(this);
         this.eventSource.onopen = this.onOpen.bind(this);
+
+        this.reconnectTimeout = setTimeout(this.forceEventListenerReconnect.bind(this), 60000);
+        this.messageReceivedCount = 0;
+    }
+
+    forceEventListenerReconnect()
+    {
+        this.logger.info("Forcing event listener reconnect");
+        this.eventSource.close();
+        this.initEventListener();
     }
 
     onMessageReceived(e)
@@ -63,6 +75,7 @@ class Client extends EventEmitter
         let data = JSON.parse(e.data);
         this.emit(data.listener + "/*", data.event);
         this.emit(data.listener + "/" + data.event.name, data.event);
+        this.messageReceivedCount++;
     }
 
     query(endpoint, method, params = [])
@@ -91,14 +104,22 @@ class Client extends EventEmitter
             this.logger.error("Event relay error: " + e.message);
 
             // If we were connected, trigger a reconnect
-            // if (this.isConnected) {
-            //     setTimeout(this.initEventListener.bind(this), 5000);
-            // }
+            if (this.isConnected) {
+                this.forceEventListenerReconnect();
+            }
     
             this.isConnected = false;
             this.emit('disconnected');
-        }
+        } else {
+            clearTimeout(this.reconnectTimeout);
 
+            if (this.messageReceivedCount > 0) {
+                this.logger.warn("Event relay unknown error after having received messages, suspecting disconnection");
+                this.forceEventListenerReconnect();
+            } else {
+                this.reconnectTimeout = setTimeout(this.forceEventListenerReconnect.bind(this), 60000);
+            }
+        }
     }
 
     onOpen(e)
