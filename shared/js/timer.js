@@ -76,7 +76,7 @@ class Timer
             let playerName = element.dataset.player;
 
             // Handle player if present and their timer is actually elapsed
-            if(playerName && this.timer.players[playerName].elapsed) {
+            if(playerName && this.timer.players[playerName] && this.timer.players[playerName].elapsed) {
                 if(!element.classList.contains('timer-ended')) {
                     element.classList.remove('timer-started', 'timer-paused');
                     element.classList.toggle('timer-ended', true);
