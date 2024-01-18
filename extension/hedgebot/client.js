@@ -38,7 +38,10 @@ class Client extends EventEmitter
 
     initEventListener()
     {
-        this.logger.info("Connecting to event relay...");
+        // Don't log errors on reconnection
+        if (this.eventSource === null) {
+            this.logger.info("Connecting to event relay...");
+        }
 
         let url = null;
         let esOptions = {};
@@ -65,7 +68,6 @@ class Client extends EventEmitter
 
     forceEventListenerReconnect()
     {
-        this.logger.info("Forcing event listener reconnect");
         this.eventSource.close();
         this.initEventListener();
     }
@@ -114,7 +116,6 @@ class Client extends EventEmitter
             clearTimeout(this.reconnectTimeout);
 
             if (this.messageReceivedCount > 0) {
-                this.logger.warn("Event relay unknown error after having received messages, suspecting disconnection");
                 this.forceEventListenerReconnect();
             } else {
                 this.reconnectTimeout = setTimeout(this.forceEventListenerReconnect.bind(this), 60000);
