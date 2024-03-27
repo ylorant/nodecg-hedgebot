@@ -41,6 +41,13 @@
         "width": 2,
         "file": "timers/timers.html",
         "headerColor": "#525F78"
+      },
+      {
+        "name": "remote-timers",
+        "title": "Remote timers",
+        "width": 2,
+        "file": "remote-timers/remote-timers.html",
+        "headerColor": "#525F78"
       }
     ]
   },

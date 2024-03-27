@@ -21,6 +21,7 @@ class HedgebotExtension
         this.replicants.scheduleNext = nodecg.Replicant("scheduleNext", "hedgebot", DEFAULT_REPLICANT_OPTS);
         this.replicants.schedule = nodecg.Replicant("schedule", "hedgebot", DEFAULT_REPLICANT_OPTS);
         this.replicants.timers = nodecg.Replicant("timers", "hedgebot", DEFAULT_REPLICANT_OPTS);
+        this.replicants.remoteTimers = nodecg.Replicant("remoteTimers", "hedgebot", DEFAULT_REPLICANT_OPTS);
         this.replicants.serverOffset = nodecg.Replicant("serverOffset", "hedgebot", DEFAULT_REPLICANT_OPTS);
 
         nodecg.log.info("Starting Hedgebot client...");
@@ -31,6 +32,10 @@ class HedgebotExtension
         this.client.on('horaro/schedulerefresh', this.onScheduleUpdate.bind(this));
         this.client.on('horaro/scheduleupdate', this.onScheduleUpdate.bind(this));
         this.client.on('timer/*', this.onTimerUpdate.bind(this));
+        this.client.on('remoteTimerList/reload', this.onRemoteTimerReload.bind(this));
+        this.client.on('remoteTimer/update', this.onRemoteTimerUpdate.bind(this));
+        this.client.on('remoteTimer/new', this.onRemoteTimerNew.bind(this));
+        this.client.on('remoteTimer/delete', this.onRemoteTimerDelete.bind(this));
         
         nodecg.listenFor("rpcCall", this.onRPCCall.bind(this));
 
@@ -71,6 +76,16 @@ class HedgebotExtension
 
             this.fetchServerOffset();
         });
+    }
+
+    fetchRemoteTimers()
+    {
+        this.nodecg.log.info("Fetching remote timers...");
+
+        this.client.query("/plugin/remote-timer", "getTimers")
+            .then((timers) => {
+                this.replicants.remoteTimers.value = timers;
+            });
     }
 
     fetchServerOffset()
@@ -153,8 +168,8 @@ class HedgebotExtension
         
         let timeDiff = localTime - remoteTime;
         
-        this.nodecg.log.info("Fetched remote server time: " + serverTime.time + ' (' + serverTime.msec + 'ms)');
-        this.nodecg.log.info("Time diff w/ server is " + timeDiff + " ms");
+        this.nodecg.log.debug("Fetched remote server time: " + serverTime.time + ' (' + serverTime.msec + 'ms)');
+        this.nodecg.log.debug("Time diff w/ server is " + timeDiff + " ms");
 
         this.replicants.serverOffset.value = timeDiff;
     }
@@ -188,6 +203,7 @@ class HedgebotExtension
 
             this.fetchCurrentSchedule();
             this.fetchTimers();
+            this.fetchRemoteTimers();
         }
 
         this.replicants.connected.value = true;
@@ -218,6 +234,64 @@ class HedgebotExtension
             let timer = this.replicants.timers.value[timerType];
             if(timer.id == data.timer.id) {
                 this.replicants.timers.value[timerType] = data.timer;
+            }
+        }
+    }
+
+    onRemoteTimerReload(data)
+    {
+        let serverTime = {
+            time: data.localTime,
+            msec: data.msec
+        };
+
+        this.setServerOffset(serverTime);
+        this.replicants.remoteTimers.value = data.list;
+    }
+
+    onRemoteTimerUpdate(data)
+    {
+        let serverTime = {
+            time: data.localTime,
+            msec: data.msec
+        };
+
+        this.setServerOffset(serverTime);
+
+        for(let index in this.replicants.remoteTimers.value) {
+            let timer = this.replicants.remoteTimers.value[index];
+            if(timer.key == data.remoteTimer.key) {
+                this.replicants.remoteTimers.value[index] = data.remoteTimer;
+            }
+        }
+    }
+
+    onRemoteTimerNew(data)
+    {
+        let serverTime = {
+            time: data.localTime,
+            msec: data.msec
+        };
+
+        this.setServerOffset(serverTime);
+        this.replicants.remoteTimers.value.push(data.remoteTimer);
+    }
+
+    onRemoteTimerDelete(data)
+    {
+
+        let serverTime = {
+            time: data.localTime,
+            msec: data.msec
+        };
+
+        this.setServerOffset(serverTime);
+        
+        for(let index in this.replicants.remoteTimers.value) {
+            let timer = this.replicants.remoteTimers.value[index];
+            if(timer.key == data.remoteTimer.key) {
+                this.replicants.remoteTimers.value.splice(index, 1);
+                return;
             }
         }
     }

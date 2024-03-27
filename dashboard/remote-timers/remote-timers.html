@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<link rel="stylesheet" href="remote-timers.css" />
+</head>
+<body>
+	<p>
+		Server time offset: <span id="server-offset"></span>
+	</p>
+	<div id="timer-template" class="timer" data-key="">
+		<div class="timer-main">
+			<div class="timer-title"></div>
+			<div class="timer-value"></div>
+		</div>
+		<div class="timer-split">
+			<div class="timer-current-split-name"></div>
+			<div class="timer-current-split-time"></div>
+		</div>
+	</div>
+
+    <div id="timers"></div>
+
+	<script src="../base-panel.js"></script>
+	<script src="remote-timers.js"></script>
+	<script type="text/javascript">
+		let panel = new RemoteTimersPanel(nodecg);
+		panel.init();
+	</script>
+</body>
+</html>

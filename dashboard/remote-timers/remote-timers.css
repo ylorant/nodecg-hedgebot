@@ -1,0 +1,59 @@
+#timer-template
+{
+    display: none;
+}
+
+.timer
+{
+    padding: 10px 0px;
+}
+
+.timer .timer-main
+{
+    display: flex;
+    padding: 10px;
+    background: #222222;
+    align-items: center;
+}
+
+.timer .timer-value
+{
+    text-align: right;
+    font-size: 20px;
+    font-weight: bold;
+
+    transition: all 1s;
+}
+
+.timer .timer-split
+{
+    padding: 10px;
+    background: #333333;
+    display: flex;
+}
+
+.timer .timer-main > div,
+.timer .timer-split > div
+{
+    width: 50%;
+}
+
+.timer .timer-split .timer-current-split-time
+{
+    text-align: right;
+}
+
+.timer.timer-started .timer-main
+{
+    background-color: #3333ff;
+}
+
+.timer.timer-started.timer-paused .timer-main
+{
+    background-color: #888888;
+}
+
+.timer.timer-ended .timer-main
+{
+    background-color: #33aa33;
+}
