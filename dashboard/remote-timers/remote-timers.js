@@ -22,7 +22,6 @@ class RemoteTimersPanel extends BasePanel
             elapsed += (currentTimestamp / 1000) - startTime;
         }
 
-        
         return elapsed;
     }
 
@@ -70,7 +69,7 @@ class RemoteTimersPanel extends BasePanel
     /** Trigers a (re-)render of the given timer */
     renderTimer(timer)
     {
-        // Remove all existing timers
+        // Remove all existing timers for the given key
         let timerElements = this.elements.timers.querySelectorAll('.timer');
         for(let element of timerElements) {
             if(timer.key == element.dataset.key) {
