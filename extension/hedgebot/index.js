@@ -11,6 +11,8 @@ class HedgebotExtension
         this.replicants = {};
         this.client = null;
         this.alreadyConnected = false;
+        this.fetchTimersInterval = null;
+        this.fetchRemoteTimersInterval = null;
 
         nodecg.log.info("Initializing Hedgebot bundle");
 
@@ -42,14 +44,16 @@ class HedgebotExtension
         this.client.initEventListener();
     }
 
-    fetchTimers()
+    fetchTimers(verbose = false)
     {
         let timerList = {};
         let fetchedIds = [];
         let promises = [];
         let timerCount = 0;
 
-        this.nodecg.log.info("Fetching timer status: " + Object.values(this.nodecg.bundleConfig.timers).join(", "));
+        if (verbose) {
+            this.nodecg.log.info("Fetching timer status: " + Object.values(this.nodecg.bundleConfig.timers).join(", "));
+        }
 
         // Fetching timers
         for(let type in this.nodecg.bundleConfig.timers) {
@@ -71,16 +75,21 @@ class HedgebotExtension
         }
 
         Promise.all(promises).then(() => {
-            this.nodecg.log.info("Fetched " + timerCount + " timers: " + fetchedIds.join(", "));
+            if (verbose) {
+                this.nodecg.log.info("Fetched " + timerCount + " timers: " + fetchedIds.join(", "));
+            }
+
             this.replicants.timers.value = timerList;
 
             this.fetchServerOffset();
         });
     }
 
-    fetchRemoteTimers()
+    fetchRemoteTimers(verbose = false)
     {
-        this.nodecg.log.info("Fetching remote timers...");
+        if (verbose) {
+            this.nodecg.log.info("Fetching remote timers...");
+        }
 
         this.client.query("/plugin/remote-timer", "getTimers")
             .then((timers) => {
@@ -202,8 +211,23 @@ class HedgebotExtension
             this.alreadyConnected = true;
 
             this.fetchCurrentSchedule();
-            this.fetchTimers();
-            this.fetchRemoteTimers();
+            this.fetchTimers(true);
+            this.fetchRemoteTimers(true);
+
+            // Add interval to periodically fetch remote timers to avoid desync
+            if (this.nodecg.bundleConfig.refreshInterval.timers) {
+                this.fetchTimersInterval = setInterval(
+                    this.fetchTimers.bind(this), 
+                    this.nodecg.bundleConfig.refreshInterval.timers
+                );
+            }
+
+            if (this.nodecg.bundleConfig.refreshInterval.remoteTimers) {
+                this.fetchRemoteTimersInterval = setInterval(
+                    this.fetchRemoteTimers.bind(this), 
+                    this.nodecg.bundleConfig.refreshInterval.remoteTimers
+                );
+            }
         }
 
         this.replicants.connected.value = true;
