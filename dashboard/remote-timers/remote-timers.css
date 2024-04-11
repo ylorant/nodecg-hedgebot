@@ -5,14 +5,14 @@
 
 .timer
 {
-    padding: 10px 0px;
+    margin: 15px 0px;
+    background: #333333;
 }
 
 .timer .timer-main
 {
     display: flex;
     padding: 10px;
-    background: #222222;
     align-items: center;
 }
 
@@ -28,32 +28,53 @@
 .timer .timer-split
 {
     padding: 10px;
-    background: #333333;
+    background: rgba(0, 0, 0, 0.3);
     display: flex;
+    gap: 1rem;
 }
 
-.timer .timer-main > div,
-.timer .timer-split > div
+.timer .timer-main > div
 {
     width: 50%;
+}
+
+.timer .timer-split .timer-current-split-name
+{
+    flex-grow: 1;
 }
 
 .timer .timer-split .timer-current-split-time
 {
     text-align: right;
+    flex-shrink: 1;
 }
 
-.timer.timer-started .timer-main
+.timer.timer-started
 {
     background-color: #3333ff;
 }
 
-.timer.timer-started.timer-paused .timer-main
+.timer.timer-started.timer-paused
 {
     background-color: #888888;
 }
 
-.timer.timer-ended .timer-main
+.timer.timer-ended
 {
     background-color: #33aa33;
+}
+
+.ahead
+{
+    color: #33aa33;
+}
+
+.timer-ended .ahead
+{
+    color: #00ff00;
+}
+
+.behind
+{
+    color: #aa3333;
 }

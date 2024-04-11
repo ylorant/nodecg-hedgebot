@@ -28,7 +28,7 @@ class RemoteTimersPanel extends BasePanel
     /**
      * Formats a timer's current time.
      */
-    formatTimerTime(elapsed, milliseconds = false, showHours = true)
+    formatTimerTime(elapsed, milliseconds = false, showEmptyUnits = true, minimumUnits = 1)
     {
         let output = "";
 
@@ -47,19 +47,25 @@ class RemoteTimersPanel extends BasePanel
             return Math.abs(el).toString().padStart(2, "0");
         });
 
-        // Remove hours if asked and actually 0
-        if(!hours && !showHours) {
-            components.shift();
-        }
+        // Remove empty units if asked
+        if(!showEmptyUnits) {
+            while (components.length > minimumUnits) {
+                if (parseInt(components[0]) != 0) {
+                    break;
+                }
 
-        if (elapsed < 0) {
-            output = "-";
+                components.shift();
+            }
+
+            // Remove leading zeroes from the first unit, while keeping a 0 if the time is actually 0
+            components[0] = components[0].replace(/^0+/g, '');
+            components[0] = components[0].length == 0 ? "0" : components[0];
         }
 
         output += components.join(":");
 
-        if(milliseconds) {
-            let ms = Math.round((elapsed - totalSeconds) * 1000);
+        if(milliseconds && Math.abs(elapsed) < 60) {
+            let ms = Math.abs(Math.round((elapsed - totalSeconds) * 10));
             output += "." + ms;
         }
         
@@ -113,16 +119,31 @@ class RemoteTimersPanel extends BasePanel
         }
 
         // Update current split
-        let splitTime;
+        let splitTime = "--:--";
+        let splitTimeDifference;
+        let splitTimeDifferenceClass;
+        let showSplit = timerInfo.started || timerInfo.offset;
 
-        if (timerInfo.started) {
-            splitTime = this.formatTimerTime(elapsed - timerInfo.currentSplitStartTime, false, false);
-        } else {
-            splitTime = "--:--";
+        if (showSplit) {
+            if (timerInfo.currentSplitStartTime != -1) {
+                splitTime = this.formatTimerTime(timerInfo.currentSplitStartTime, false, false, 2);
+            }
+            
+            if (timerInfo.currentSplitStartTime != -1 && timerInfo.currentSplitReferenceStartTime != -1) {
+                splitTimeDifference = timerInfo.currentSplitStartTime - timerInfo.currentSplitReferenceStartTime;
+                splitTimeDifferenceClass = splitTimeDifference <= 0 ? "ahead" : "behind";
+
+                splitTimeDifference = this.formatTimerTime(splitTimeDifference, true, false);
+            }
         }
 
         element.querySelector('.timer-current-split-name').innerText = timerInfo.currentSplitName ? timerInfo.currentSplitName : "-";
         element.querySelector('.timer-current-split-time').innerText = splitTime;
+
+        let splitTimeDifferenceElement = element.querySelector('.timer-current-split-time-difference');
+        splitTimeDifferenceElement.innerText = splitTimeDifference ?? (showSplit ? "-" : "");
+        splitTimeDifferenceElement.classList.remove('ahead', 'behind');
+        splitTimeDifferenceElement.classList.add(splitTimeDifferenceClass);
     }
 
     /** Interval, each 500ms, update the timers' display */

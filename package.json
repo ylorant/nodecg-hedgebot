@@ -45,7 +45,7 @@
       {
         "name": "remote-timers",
         "title": "Remote timers",
-        "width": 2,
+        "width": 3,
         "file": "remote-timers/remote-timers.html",
         "headerColor": "#525F78"
       }
