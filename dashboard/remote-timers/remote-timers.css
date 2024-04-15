@@ -66,15 +66,18 @@
 
 .ahead
 {
-    color: #33aa33;
+    font-weight: bold;
+    color: #33ff33;
 }
 
 .timer-ended .ahead
 {
+    font-weight: bold;
     color: #00ff00;
 }
 
 .behind
 {
-    color: #aa3333;
+    font-weight: bold;
+    color: #ff3333;
 }

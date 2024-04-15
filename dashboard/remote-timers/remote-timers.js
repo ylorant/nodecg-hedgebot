@@ -131,9 +131,14 @@ class RemoteTimersPanel extends BasePanel
             
             if (timerInfo.currentSplitStartTime != -1 && timerInfo.currentSplitReferenceStartTime != -1) {
                 splitTimeDifference = timerInfo.currentSplitStartTime - timerInfo.currentSplitReferenceStartTime;
-                splitTimeDifferenceClass = splitTimeDifference <= 0 ? "ahead" : "behind";
+                if (splitTimeDifference != 0) {
+                    splitTimeDifferenceClass = splitTimeDifference < 0 ? "ahead" : "behind";
+                }
 
                 splitTimeDifference = this.formatTimerTime(splitTimeDifference, true, false);
+                if (splitTimeDifference > 0) {
+                    splitTimeDifference = "+" + splitTimeDifference;
+                }
             }
         }
 
