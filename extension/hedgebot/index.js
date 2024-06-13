@@ -112,8 +112,7 @@ class HedgebotExtension
             .then((schedule) => {
                 if(schedule) {
                     this.storeSchedule(schedule);
-
-                    this.nodecg.log.info("Fetched schedule.");
+                    this.nodecg.log.info("Fetched schedule: " + schedule.data.name);
                 } else {
                     this.nodecg.log.info("No schedule returned by the API.");
                 }
@@ -189,7 +188,10 @@ class HedgebotExtension
         let nextItem = _.cloneDeep(schedule.nextItem);
 
         currentItem = this.formatItemData(currentItem, schedule);
-        nextItem = this.formatItemData(nextItem, schedule);
+
+        if (nextItem) {
+            nextItem = this.formatItemData(nextItem, schedule);
+        }
 
         for(let item of schedule.data.items) {
             item = this.formatItemData(item, schedule);
