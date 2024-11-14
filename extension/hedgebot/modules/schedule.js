@@ -87,7 +87,9 @@ class ScheduleModule extends Module
         let currentItem = _.cloneDeep(schedule.currentItem);
         let nextItem = _.cloneDeep(schedule.nextItem);
 
-        currentItem = this.formatItemData(currentItem, schedule);
+        if (currentItem) {
+            currentItem = this.formatItemData(currentItem, schedule);
+        }
 
         if (nextItem) {
             nextItem = this.formatItemData(nextItem, schedule);
