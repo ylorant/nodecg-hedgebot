@@ -44,10 +44,11 @@ class HedgebotExtension
 
     fetchLoadedModules()
     {
-        this.nodecg.log.info("Fetching current schedule...");
+        this.nodecg.log.info("Fetching bot plugins...");
 
         this.client.query("/plugin", "getList")
             .then((modules) => {
+                this.nodecg.log.info("Found loaded plugins: " + modules.join(', '));
                 for (let module of modules) {
                     this.attemptLoadModule(module);
                 }
@@ -74,11 +75,10 @@ class HedgebotExtension
             this.nodecg.log.info("Fetching initial data...");
 
             this.alreadyConnected = true;
+            this.fetchLoadedModules();
         }
 
         this.replicants.connected.value = true;
-
-        this.fetchLoadedModules();
     }
 
     onDisconnect(e)
